@@ -1,5 +1,7 @@
+from game import Game
+
 def main():
-    print("Hello from chess-game!")
+    game = Game()
 
 
 if __name__ == "__main__":
