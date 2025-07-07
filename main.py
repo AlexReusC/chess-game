@@ -1,8 +1,13 @@
+import curses
 from game import Game
 
-def main():
-    game = Game()
 
+
+def main(stdscr):
+    game = Game(stdscr)
+
+
+   
 
 if __name__ == "__main__":
-    main()
+    curses.wrapper(main)
