@@ -11,6 +11,7 @@ class Game():
         self.white_player = Player(True)
         self.black_player = Player(False)
         self.is_white_turn = True
+        self.cursor_y, self.cursor_x = 0, 0
 
         for col in range(8):
             self.board.add_piece(Pawn(self.white_player, 1, col))
@@ -37,26 +38,44 @@ class Game():
 
 
     def run(self, stdscr):
-        curses.start_color()
-        curses.use_default_colors()
-        curses.init_pair(1, curses.COLOR_WHITE, -1)  
+        while True:
+            curses.start_color()
+            curses.use_default_colors()
+            curses.init_pair(1, curses.COLOR_WHITE, -1)  
+            curses.init_pair(2, curses.COLOR_BLUE, -1)  
 
 
-        stdscr.clear()
-        for row in range(8):
-            for col in range(8):
+            stdscr.clear()
+            for row in range(8):
+                for col in range(8):
 
 
-                char = self.get_char(row, col)
-                color = curses.color_pair(1)
+                    char = self.get_char(row, col)
+                    color = curses.color_pair(1)
+                    if row == self.cursor_y and col == self.cursor_x:
+                        color = curses.color_pair(2)
 
-                try:
-                    stdscr.addstr(row, col * 2, f"{char} ", color)
-                except curses.error:
-                    pass
+                    try:
+                        stdscr.addstr(row, col * 2, f"{char} ", color)
+                    except curses.error:
+                        pass
 
-        stdscr.refresh()
-        stdscr.getch()
+            stdscr.addstr(9, 0, "White player turn ", curses.color_pair(1))
+
+            stdscr.refresh()
+            key = stdscr.getch()
+            if key == curses.KEY_UP:
+                self.cursor_y = max(self.cursor_y - 1, 0)
+            elif key == curses.KEY_DOWN:
+                self.cursor_y = min(self.cursor_y + 1, 7)
+            elif key == curses.KEY_RIGHT:
+                self.cursor_x = min(self.cursor_x + 1, 7)
+            elif key == curses.KEY_LEFT:
+                self.cursor_x = max(self.cursor_x - 1, 0)
+            elif key == ord('q'):
+                break
+
+        
 
 
     def get_char(self, y, x):
