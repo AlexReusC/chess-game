@@ -5,17 +5,6 @@ from board import Board
 from player import Player
 from piece import Pawn, Rook, Knight, Bishop, King, Queen
 
-board = [
-    ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
-    ['♟'] * 8,
-    ['*'] * 8,
-    ['*'] * 8,
-    ['*'] * 8,
-    ['*'] * 8,
-    ['♙'] * 8,
-    ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
-]
-
 class Game():
     def __init__(self):
         self.board = Board()
@@ -54,15 +43,15 @@ class Game():
 
 
         stdscr.clear()
-        for y in range(8):
-            for x in range(8):
+        for row in range(8):
+            for col in range(8):
 
 
-                char = self.get_char(y, x)
+                char = self.get_char(row, col)
                 color = curses.color_pair(1)
 
                 try:
-                    stdscr.addstr(y, x * 2, f"{char} ", color)
+                    stdscr.addstr(row, col * 2, f"{char} ", color)
                 except curses.error:
                     pass
 
