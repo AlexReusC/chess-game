@@ -3,6 +3,7 @@ import curses
 
 from board import Board
 from player import Player
+from piece import Pawn
 
 board = [
     ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
@@ -16,22 +17,28 @@ board = [
 ]
 
 class Game():
-    def __init__(self, stdscr):
-        self.stdscr = stdscr
-
+    def __init__(self):
         self.board = Board()
-        self.white_player = Player()
-        self.black_player = Player()
+        self.white_player = Player(True)
+        self.black_player = Player(False)
         self.is_white_turn = True
 
-        stdscr.clear()
+        self.board.add_piece(Pawn(self.white_player, 0, 0))
+
+
+
+    def run(self, stdscr):
         curses.start_color()
         curses.use_default_colors()
         curses.init_pair(1, curses.COLOR_WHITE, -1)  
 
+
+        stdscr.clear()
         for y in range(8):
             for x in range(8):
-                char = board[y][x]
+
+
+                char = self.get_char(y, x)
                 color = curses.color_pair(1)
 
                 try:
@@ -42,11 +49,15 @@ class Game():
         stdscr.refresh()
         stdscr.getch()
 
-    def run(self):
-       a = 2 
 
-
-
+    def get_char(self, y, x):
+        match self.board.get_piece_at_position(y, x):
+            case None:
+                return "*"
+            case (Pawn(), True):
+                return "♟"
+            case _:
+                return "*"
 
 
 
