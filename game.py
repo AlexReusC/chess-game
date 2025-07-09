@@ -45,16 +45,23 @@ class Game():
             curses.use_default_colors()
             curses.init_pair(1, curses.COLOR_WHITE, -1)  
             curses.init_pair(2, curses.COLOR_BLUE, -1)  
+            curses.init_pair(3, curses.COLOR_GREEN, -1)
+            curses.init_pair(4, curses.COLOR_RED, -1)
 
+            possible_movements = self.board.get_possible_movements(self.cursor_y, self.cursor_x) 
+            possible_kills = self.board.get_possible_kills(self.cursor_y, self.cursor_x)
 
             stdscr.clear()
             for row in range(8):
                 for col in range(8):
 
-
                     char = self.get_char(row, col)
                     color = curses.color_pair(1)
-                    if row == self.cursor_y and col == self.cursor_x:
+                    if (row, col) in possible_movements:
+                        color = curses.color_pair(3)
+                    elif (row, col) in possible_kills:
+                        color = curses.color_pair(4)
+                    elif row == self.cursor_y and col == self.cursor_x:
                         color = curses.color_pair(2)
 
                     try:

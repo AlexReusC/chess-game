@@ -13,9 +13,11 @@ class Piece(ABC):
     def get_char(self) -> str:
         pass
 
+    @abstractmethod
     def get_possible_movements(self):
         pass
 
+    @abstractmethod
     def get_possible_kills(self):
         pass
 
@@ -29,6 +31,11 @@ class Pawn(Piece):
         else:
             return "♙"
 
+    def get_possible_movements(self):
+        return [(4, 4)]
+
+    def get_possible_kills(self):
+        return [(4, 4)]
 
 class Rook(Piece):
     def __init__(self, owner, row, col):
@@ -40,6 +47,12 @@ class Rook(Piece):
         else:
             return "♖"
 
+    def get_possible_movements(self):
+        return [(4, 4)]
+
+    def get_possible_kills(self):
+        return [(4, 4)]
+
 class Knight(Piece):
     def __init__(self, owner, row, col):
         super().__init__(owner, row, col)
@@ -49,6 +62,12 @@ class Knight(Piece):
             return "♞"
         else:
             return "♘"
+        
+    def get_possible_movements(self):
+        return [(4, 4)]
+    
+    def get_possible_kills(self):
+        return [(4, 4)]
 
 class Bishop(Piece):
     def __init__(self, owner, row, col):
@@ -59,6 +78,12 @@ class Bishop(Piece):
             return "♝"
         else:
             return "♗"
+        
+    def get_possible_movements(self):
+        return [(4, 4)]
+
+    def get_possible_kills(self):
+        return [(4, 4)]
 
 class Queen(Piece):
     def __init__(self, owner, row, col):
@@ -69,6 +94,12 @@ class Queen(Piece):
         else:
             return "♕"
 
+    def get_possible_movements(self):
+        return [(4, 4)]
+
+    def get_possible_kills(self):
+        return [(5, 5)]
+
 class King(Piece):
     def __init__(self, owner, row, col):
         super().__init__(owner, row, col)
@@ -77,3 +108,8 @@ class King(Piece):
             return "♚"
         else:
             return "♔"
+    def get_possible_movements(self):
+        return [(4, 4)]
+    
+    def get_possible_kills(self):
+        return [(5, 5)]
