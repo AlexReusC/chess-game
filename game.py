@@ -12,6 +12,8 @@ class Game():
         self.black_player = Player(False)
         self.is_white_turn = True
         self.cursor_y, self.cursor_x = 0, 0
+        self.is_piece_selected = False
+        self.selected_piece_y, self.selected_piece_x = -1, -1 
 
         for col in range(8):
             self.board.add_piece(Pawn(self.white_player, 1, col))
@@ -72,6 +74,13 @@ class Game():
                 self.cursor_x = min(self.cursor_x + 1, 7)
             elif key == curses.KEY_LEFT:
                 self.cursor_x = max(self.cursor_x - 1, 0)
+            elif key == ord(' '):
+                if self.is_piece_selected:
+                    self.board.move_piece(self.selected_piece_y, self.selected_piece_x, self.cursor_y, self.cursor_x)
+                    self.is_piece_selected = False
+                elif self.board.get_piece_at_position(self.cursor_y, self.cursor_x):
+                    self.selected_piece_y, self.selected_piece_x = self.cursor_y, self.cursor_x
+                    self.is_piece_selected = True
             elif key == ord('q'):
                 break
 

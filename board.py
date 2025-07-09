@@ -13,3 +13,8 @@ class Board():
 
     def add_piece(self, piece):
         self._state[piece.row][piece.col] = piece
+
+    def move_piece(self, source_row, source_col, dest_row, dest_col):
+        if self._state[source_row][source_col]:
+            self._state[dest_row][dest_col] = self._state[source_row][source_col]
+            self._state[source_row][source_col] = None

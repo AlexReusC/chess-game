@@ -1,4 +1,6 @@
+
 class Piece():
+    
     def __init__(self, owner, row, col):
         self.owner = owner
         self.row = row
