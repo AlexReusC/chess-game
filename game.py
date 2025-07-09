@@ -3,7 +3,7 @@ import curses
 
 from board import Board
 from player import Player
-from piece import Pawn, Rook, Knight, Bishop, King, Queen
+from piece import Piece, Pawn, Rook, Knight, Bishop, King, Queen
 
 class Game():
     def __init__(self):
@@ -87,36 +87,13 @@ class Game():
         
 
 
-    def get_char(self, y, x):
-        match self.board.get_piece_at_position(y, x):
-            case None:
-                return "*"
-            case (Pawn(), True):
-                return "♟"
-            case (Pawn(), False):
-                return "♙"
-            case (Rook(), True):
-                return "♜"
-            case (Rook(), False):
-                return "♖"
-            case (Knight(), True):
-                return "♞"
-            case (Knight(), False):
-                return "♘"
-            case (Bishop(), True):
-                return "♝"
-            case (Bishop(), False):
-                return "♗"
-            case (Queen(), True):
-                return "♛"
-            case (Queen(), False):
-                return "♕"
-            case (King(), True):
-                return "♚"
-            case (King(), False):
-                return "♔"
-            case _:
-                return "*"
+    def get_char(self, row, col):
+        piece : Piece = self.board.get_piece_at_position(row, col)
+        if piece:
+            return piece.get_char()
+        return "*"
+    
 
+     
 
 
