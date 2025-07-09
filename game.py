@@ -14,6 +14,8 @@ class Game():
         self.cursor_y, self.cursor_x = 0, 0
         self.is_piece_selected = False
         self.selected_piece_y, self.selected_piece_x = -1, -1 
+        self.possible_movements = []
+        self.possible_kills = []
 
         for col in range(8):
             self.board.add_piece(Pawn(self.white_player, 1, col))
@@ -48,50 +50,58 @@ class Game():
             curses.init_pair(3, curses.COLOR_GREEN, -1)
             curses.init_pair(4, curses.COLOR_RED, -1)
 
-            possible_movements = self.board.get_possible_movements(self.cursor_y, self.cursor_x) 
-            possible_kills = self.board.get_possible_kills(self.cursor_y, self.cursor_x)
+            self.possible_movements = self.board.get_possible_movements(self.cursor_y, self.cursor_x) 
+            self.possible_kills = self.board.get_possible_kills(self.cursor_y, self.cursor_x)
 
-            stdscr.clear()
-            for row in range(8):
-                for col in range(8):
-
-                    char = self.get_char(row, col)
-                    color = curses.color_pair(1)
-                    if (row, col) in possible_movements:
-                        color = curses.color_pair(3)
-                    elif (row, col) in possible_kills:
-                        color = curses.color_pair(4)
-                    elif row == self.cursor_y and col == self.cursor_x:
-                        color = curses.color_pair(2)
-
-                    try:
-                        stdscr.addstr(row, col * 2, f"{char} ", color)
-                    except curses.error:
-                        pass
-
-            stdscr.addstr(9, 0, "White player turn ", curses.color_pair(1))
-
-            stdscr.refresh()
-            key = stdscr.getch()
-            if key == curses.KEY_UP:
-                self.cursor_y = max(self.cursor_y - 1, 0)
-            elif key == curses.KEY_DOWN:
-                self.cursor_y = min(self.cursor_y + 1, 7)
-            elif key == curses.KEY_RIGHT:
-                self.cursor_x = min(self.cursor_x + 1, 7)
-            elif key == curses.KEY_LEFT:
-                self.cursor_x = max(self.cursor_x - 1, 0)
-            elif key == ord(' '):
-                if self.is_piece_selected:
-                    self.board.move_piece(self.selected_piece_y, self.selected_piece_x, self.cursor_y, self.cursor_x)
-                    self.is_piece_selected = False
-                elif self.board.get_piece_at_position(self.cursor_y, self.cursor_x):
-                    self.selected_piece_y, self.selected_piece_x = self.cursor_y, self.cursor_x
-                    self.is_piece_selected = True
-            elif key == ord('q'):
+            self.render(stdscr)
+            if self.process_keys(stdscr):
                 break
+            
 
+    def render(self, stdscr):
+        stdscr.clear()
+        for row in range(8):
+            for col in range(8):
+
+                char = self.get_char(row, col)
+                color = curses.color_pair(1)
+                if (row, col) in self.possible_movements:
+                    color = curses.color_pair(3)
+                elif (row, col) in self.possible_kills:
+                    color = curses.color_pair(4)
+                elif row == self.cursor_y and col == self.cursor_x:
+                    color = curses.color_pair(2)
+
+                try:
+                    stdscr.addstr(row, col * 2, f"{char} ", color)
+                except curses.error:
+                    pass
+
+        stdscr.addstr(9, 0, "White player turn ", curses.color_pair(1))
+
+        stdscr.refresh()
+
+    def process_keys(self, stdscr): 
+        key = stdscr.getch()
+        if key == curses.KEY_UP:
+            self.cursor_y = max(self.cursor_y - 1, 0)
+        elif key == curses.KEY_DOWN:
+            self.cursor_y = min(self.cursor_y + 1, 7)
+        elif key == curses.KEY_RIGHT:
+            self.cursor_x = min(self.cursor_x + 1, 7)
+        elif key == curses.KEY_LEFT:
+            self.cursor_x = max(self.cursor_x - 1, 0)
+        elif key == ord(' '):
+            if self.is_piece_selected:
+                self.board.move_piece(self.selected_piece_y, self.selected_piece_x, self.cursor_y, self.cursor_x)
+                self.is_piece_selected = False
+            elif self.board.get_piece_at_position(self.cursor_y, self.cursor_x):
+                self.selected_piece_y, self.selected_piece_x = self.cursor_y, self.cursor_x
+                self.is_piece_selected = True
+        elif key == ord('q'):
+            return True
         
+        return False
 
 
     def get_char(self, row, col):
