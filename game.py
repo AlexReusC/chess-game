@@ -1,19 +1,21 @@
 import sys
 import curses
+import typing
 
 from board import Board
 from player import Player
 from piece import Piece, Pawn, Rook, Knight, Bishop, King, Queen
+
 
 class Game():
     def __init__(self):
         self.board = Board()
         self.white_player = Player(True)
         self.black_player = Player(False)
-        self.is_white_turn = True
+        self.current_player : Player = self.white_player
         self.cursor_y, self.cursor_x = 0, 0
         self.is_piece_selected = False
-        self.selected_piece_y, self.selected_piece_x = -1, -1 
+        self.selected_piece : typing.Optional[Piece] = None
         self.possible_movements = []
         self.possible_kills = []
 
@@ -39,8 +41,6 @@ class Game():
         self.board.add_piece(Knight(self.black_player, 7, 6))
         self.board.add_piece(Rook(self.black_player, 7, 7))
 
-
-
     def run(self, stdscr):
         while True:
             curses.start_color()
@@ -50,8 +50,9 @@ class Game():
             curses.init_pair(3, curses.COLOR_GREEN, -1)
             curses.init_pair(4, curses.COLOR_RED, -1)
 
-            self.possible_movements = self.board.get_possible_movements(self.cursor_y, self.cursor_x) 
-            self.possible_kills = self.board.get_possible_kills(self.cursor_y, self.cursor_x)
+            if not self.is_piece_selected:
+                self.possible_movements = self.board.get_possible_movements(self.cursor_y, self.cursor_x) 
+                self.possible_kills = self.board.get_possible_kills(self.cursor_y, self.cursor_x)
 
             self.render(stdscr)
             if self.process_keys(stdscr):
@@ -93,15 +94,30 @@ class Game():
             self.cursor_x = max(self.cursor_x - 1, 0)
         elif key == ord(' '):
             if self.is_piece_selected:
-                self.board.move_piece(self.selected_piece_y, self.selected_piece_x, self.cursor_y, self.cursor_x)
-                self.is_piece_selected = False
+                self.move_piece()
             elif self.board.get_piece_at_position(self.cursor_y, self.cursor_x):
-                self.selected_piece_y, self.selected_piece_x = self.cursor_y, self.cursor_x
-                self.is_piece_selected = True
+                self.select_piece()
         elif key == ord('q'):
             return True
         
         return False
+
+    def change_player(self):
+        pass
+
+    def select_piece(self):
+        piece = self.board.get_piece_at_position(self.cursor_y, self.cursor_x)
+        if not piece or piece.owner != self.current_player :
+            return
+
+        self.selected_piece = piece
+        self.is_piece_selected = True
+
+    def move_piece(self):
+        if (self.cursor_y, self.cursor_x) in self.possible_movements or (self.cursor_y, self.cursor_x) in self.possible_kills:
+            self.board.move_piece(self.selected_piece.row, self.selected_piece.col, self.cursor_y, self.cursor_x)
+            self.is_piece_selected = False
+            self.change_player()
 
 
     def get_char(self, row, col):
